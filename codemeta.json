@@ -1,0 +1,32 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "codeRepository": "https://github.com/rsdoiel/pdtmpl",
+    "dateCreated": "2022-07-08",
+    "issueTracker": "https://github.com/rsdoiel/pdtmpl/issues",
+    "name": "pdtmpl",
+    "version": "0.0.0",
+    "description": "A light weight pre-processor for Pandoc. Target use case is JSON object\ndocuments rendered via Pandoc templates.",
+    "applicationCategory": "web publishing",
+    "programmingLanguage": [
+        "Go"
+    ],
+    "operatingSystem": [
+        "Linux",
+        "Windows 11",
+        "macOS"
+    ],
+    "softwareRequirements": [
+        "Pandoc 2.18 or better"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0003-0900-6903",
+            "givenName": "R. S.",
+            "familyName": "Doiel",
+            "email": "rsdoiel@gmail.com"
+        }
+    ]
+}
