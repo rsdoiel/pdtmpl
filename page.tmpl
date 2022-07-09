@@ -13,9 +13,18 @@
 </head>
 <body>
 <nav>
+$if(include-before)$
 $for(include-before)$
 $include-before$
 $endfor$
+$else$
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="https://github.com/rsdoiel/pdtmpl">GitHub</a></li>
+</ul>
+$endif$
 </nav>
 
 <section>
@@ -32,3 +41,4 @@ $endfor$
 
 </body>
 </html>
+
