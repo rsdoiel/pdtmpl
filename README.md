@@ -20,7 +20,7 @@ pre-processor in Go. An example usage would be to process
 called [example.tpml](example.tmpl).
 
 ```shell
-    pdtmpl example.tmpl -t html5 < example.json > example.html
+    pdtmpl example.tmpl < example.json > example.html
 ```
 
 Go package
@@ -38,7 +38,7 @@ output based on the Pandoc template `example.tmpl`
         // ... handle error
     }
     // options passed to Pandoc
-    opt := []string{"-t", "html5"}
+    opt := []string{}
     src, err = pdtmpl.Format(src, "example.tmpl", opt)
     if err != nil {
         // ... handle error
@@ -56,7 +56,7 @@ Using an `io.Reader` to retrieve the JSON content, process with the
     }
     defer f.Close()
     // options passed to Pandoc
-    opt := []string{"-t", "html5"}
+    opt := []string{}
     src, err := pdtmpl.ReadAll(f, "example.tmpl", opt)
     if err != nil {
         // ... handle error
@@ -69,7 +69,7 @@ input and write the processed pandoc templated standard output.
 
 ```go
     // options passed to Pandoc
-    opt := []string{"-t", "html5"}
+    opt := []string{}
     err := pdtmpl.ApplyTemplate(os.Stdin, os.Stdout, "example.tmpl", opt)
     if err != nil {
         // ... handle error
