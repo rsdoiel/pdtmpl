@@ -133,8 +133,7 @@ save:
 website:
 	make -f website.mak
 
-#publish:
-#	bash mk-website.bash
-#	bash publish.bash
+publish: build website
+	bash publish.bash
 
 .FORCE:
