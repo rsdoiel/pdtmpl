@@ -16,6 +16,8 @@
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="./">README</a></li>
+<li><a href="IDEAS.html">IDEAS</a></li>
+<li><a href="pdtmpl.1.html">Docs</a></li>
 <li><a href="license.html">LICENSE</a></li>
 <li><a href="about.html">About</a></li>
 <li><a href="https://github.com/rsdoiel/pdtmpl">GitHub</a></li>
@@ -77,15 +79,13 @@
 <ol type="1">
 <li>Clone https://github.com/rsdoiel/pdtmpl to your local machine</li>
 <li>Change directory into the git repository (i.e. <code>pdtmpl</code></li>
-<li>Compile using <code>go build</code></li>
-<li>Install using <code>go install</code></li>
+<li>Compile using <code>make</code></li>
+<li>Install using <code>make install</code></li>
 </ol>
 <pre class="shell"><code>    git clone https://github.com/rsdoiel/pdtmpl
     cd pdtmpl
-    git fetch origin
-    git pull origin main
-    go build -o bin/pdtmpl cmd/pdtmpl/pdtmpl.go
-    go install</code></pre>
+    make
+    make install</code></pre>
 <p>NOTE: This recipe assumes’ you are familar with setting up a Go development environment (e.g. You’ve set GOPATH environment appropriately). See the <a href="https://golang.org">go website</a> for details about setting up and compiler programs.</p>
 <h2 id="license">License</h2>
 <p>BSD 3-Clause License</p>
