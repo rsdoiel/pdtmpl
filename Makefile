@@ -61,6 +61,8 @@ uninstall: .FORCE
 	@for FNAME in $(PROGRAMS); do if [ -f $(PREFIX)/bin/$$FNAME ]; then rm -v $(PREFIX)/bin/$$FNAME; fi; done
 
 man: pdtmpl.1 .FORCE
+	mkdir -p man
+	mv pdtmpl.1 man/
 
 pdtmpl.1: pdtmpl.1.md
 	pandoc pdtmpl.1.md -s -t man -o pdtmpl.1
