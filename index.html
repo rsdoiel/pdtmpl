@@ -43,7 +43,7 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    }</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>    <span class="co">// options passed to Pandoc</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    opt := []<span class="dt">string</span>{}</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>    src, err = pdtmpl.Format(src, <span class="st">&quot;example.tmpl&quot;</span>, opt)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>    src, err = pdtmpl.Apply(src, <span class="st">&quot;example.tmpl&quot;</span>, opt)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>        <span class="co">// ... handle error</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    }</span>
@@ -64,7 +64,7 @@
 <p>Using an <code>io.Reader</code> and <code>io.Writer</code> to read JSON source from standard input and write the processed pandoc templated standard output.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>    <span class="co">// options passed to Pandoc</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    opt := []<span class="dt">string</span>{}</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    err := pdtmpl.ApplyTemplate(os.Stdin, os.Stdout, <span class="st">&quot;example.tmpl&quot;</span>, opt)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    err := pdtmpl.ApplyIO(os.Stdin, os.Stdout, <span class="st">&quot;example.tmpl&quot;</span>, opt)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="co">// ... handle error</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>    }</span></code></pre></div>

@@ -39,7 +39,7 @@ output based on the Pandoc template `example.tmpl`
     }
     // options passed to Pandoc
     opt := []string{}
-    src, err = pdtmpl.Format(src, "example.tmpl", opt)
+    src, err = pdtmpl.Apply(src, "example.tmpl", opt)
     if err != nil {
         // ... handle error
     }
@@ -70,7 +70,7 @@ input and write the processed pandoc templated standard output.
 ```go
     // options passed to Pandoc
     opt := []string{}
-    err := pdtmpl.ApplyTemplate(os.Stdin, os.Stdout, "example.tmpl", opt)
+    err := pdtmpl.ApplyIO(os.Stdin, os.Stdout, "example.tmpl", opt)
     if err != nil {
         // ... handle error
     }
