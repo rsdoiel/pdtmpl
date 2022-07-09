@@ -3,21 +3,16 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="language" content="EN">
-  $if(title)$<title>R. S. Doiel, Software Engineer/Analyst - $title$</title>$else$<title>R. S. Doiel, Software Engineer/Analyst</title>$endif$
+  <title>R. S. Doiel, Software Engineer/Analyst</title>
 
   <link rel="stylesheet" type="text/css"  href="/printfonts/print.css" media="print" />
   <link rel="stylesheet" type="text/css"  href="/webfonts/fonts.css" media="screen" />
   <link rel="stylesheet" type="text/css"  href="/css/site.css" media="screen" />
   <link title="RSS feed for rsdoiel's blog" rel="alternate" type="application/rss+xml" href="https://rsdoiel.github.io/rss.xml" />
-  $if(sourcefile)$<link title="markdown source for page" rel="alternative" type="application/markdown" href="$sourcefile$">$endif$
+  <link title="markdown source for page" rel="alternative" type="application/markdown" href="IDEAS.md">
 </head>
 <body>
 <nav>
-$if(include-before)$
-$for(include-before)$
-$include-before$
-$endfor$
-$else$
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="./">README</a></li>
@@ -27,21 +22,19 @@ $else$
 <li><a href="about.html">About</a></li>
 <li><a href="https://github.com/rsdoiel/pdtmpl">GitHub</a></li>
 </ul>
-$endif$
 </nav>
 
 <section>
-  $for(title)$<h1>$title$</h1>$endfor$
+  
 
-$body$
+<h1 id="ideas">Ideas</h1>
+<ul>
+<li>create an in memory file system for temp files, this could speed up processing and also avoid the messy issue of file permissions of the content that gets buffered to disk and passed via “–template” and “–metadata-file”.</li>
+</ul>
 </section>
 
 <footer>
-$for(include-after)$
-$include-after$
-$endfor$
 </footer>
 
 </body>
 </html>
-

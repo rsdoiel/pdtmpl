@@ -14,6 +14,9 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Project excludes
+# temp files created by pdtmpl
+pandoc.*.json
+
+# Project excluded directories
 bin/*
 dist/*

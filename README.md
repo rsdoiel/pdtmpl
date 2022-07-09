@@ -89,16 +89,14 @@ Installation
 
 1. Clone https://github.com/rsdoiel/pdtmpl to your local machine
 2. Change directory into the git repository (i.e. `pdtmpl`
-3. Compile using `go build`
-4. Install using `go install`
+3. Compile using `make`
+4. Install using `make install`
 
 ```shell
     git clone https://github.com/rsdoiel/pdtmpl
     cd pdtmpl
-    git fetch origin
-    git pull origin main
-    go build -o bin/pdtmpl cmd/pdtmpl/pdtmpl.go
-    go install
+    make
+    make install
 ```
 
 NOTE: This recipe assumes' you are familar with setting up a

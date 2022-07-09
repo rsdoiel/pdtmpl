@@ -1,8 +1,6 @@
-// pdtmpl.go is a preprocessor package for Pandoc's template engine.
-// The general idea is you have some JSON and you want to apply a
-// Pandoc template to it. The JSON is written to a temp file and passed
-// to Pandoc via `--metadata-file`. The JSON is expected to represent an
-// object where attributes map to variables in the template.
+// pdtmpl.go is a preprocessor package for Pandoc. The driving use case
+// is passing JSON or YAML documents to Pandoc and applying a Pandoc
+// template.
 //
 // @Author R. S. Doiel, <rsdoiel@gmail.com>
 //
@@ -14,55 +12,72 @@
 package pdtmpl
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-// ReadAll is a proof of concept pre-processor for Pandoc.
-// It takes a byte array (like you could read from os.Stdin),
-// containing JSON, applies a pandoc template by envoking
-// pandoc along with any additional pandoc options you provide.
-// The temp file is removed on success.
+var verbose bool
+
+// SetVerbose when set true will show the Pandoc command
+// envocation before running Pandoc to process the JSON document
+// and template. Mainly useful for debugging.
+func SetVerbose(onoff bool) {
+	verbose = onoff
+}
+
+// ReadAll reads JSON from as a stream using an io.Reader.
+// Buffers it. Then uses Apply and options return
+// a slice of bytes and error value.
 //
 //```shell
-//    out, err := pdtmpl.ReadAll(os.Stdin, "page.tmpl", nil)
+//    // Options passed to Pandoc
+//    opt := []string{}
+//    out, err := pdtmpl.ReadAll(os.Stdin, "page.tmpl", opt)
 //    if err != nil {
 //       // ... handle error
 //    }
 //    fmt.Fprintf(os.Stdout, "%s\n", out)
 //```
 //
-func ReadAll(r io.Reader, template string, args []string) ([]byte, error) {
+func ReadAll(r io.Reader, template string, options []string) ([]byte, error) {
 	// Read the JSON input
-	jsonObjectSrc, err := ioutil.ReadAll(r)
+	src, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
-	obj := map[string]*interface{}{}
-	if err := json.Unmarshal(jsonObjectSrc, &obj); err != nil {
-		return nil, err
-	}
-	return Format(jsonObjectSrc, template, args)
+	return Apply(src, template, options)
 }
 
-// ApplyTemplate reads in JSON from an io.Reader, applies the template
+// ReadFile reads a JSON or YAML document from a file then uses Apply
+// and options returning a slice of bytes and error value.
+func ReadFile(name string, template string, options []string) ([]byte, error) {
+	// Read the JSON or YAML file
+	src, err := ioutil.ReadFile(name)
+	if err != nil {
+		return nil, err
+	}
+	return Apply(src, template, options)
+}
+
+// ApplyIO reads in JSON from an io.Reader, applies the template
 // and parameters via Format() writing the result to the io.Writer.
 // returns an error value.
 //
 //```
-//  args := os.Args[1:]
-//  err := pdtmpl.ApplyTemplate(os.Stdin, os.Stdout, "example.tmpl", args)
+//  // Options passed to Pandoc
+//  opt := []string{}
+//  err := pdtmpl.ApplyIO(os.Stdin, os.Stdout, "example.tmpl", opt)
 //  if err != nil {
 //     // ... handle error
 //  }
 //```
 //
-func ApplyTemplate(r io.Reader, w io.Writer, template string, args []string) error {
-	src, err := ReadAll(r, template, args)
+func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error {
+	src, err := ReadAll(r, template, options)
 	if err != nil {
 		return err
 	}
@@ -70,25 +85,51 @@ func ApplyTemplate(r io.Reader, w io.Writer, template string, args []string) err
 	return err
 }
 
-// Format takes a byte array (like you could read from os.Stdin0
-// containing JSON. It creates a temp file and passes that to
+// Apply takes a byte array (like you could read from os.Stdin
+// containing JSON or YAML. It creates a temp file and passes that to
 // Pandoc via `--metadata-file` option along with any additional
-// pandoc options provided. Pandoc then renders the template
-// and that is returned as a byte array and error.
+// pandoc options provided. Pandoc then renders the output either
+// using the template name (if non-empty string) and the
+// additional options passed to Pandoc.
 //
 //```
 //  src, err := ioutil.ReadFile("example.json")
 //  if err != nil {
 //     // ... handle error
 //  }
-//  src, err := pdtmpl.Format(src, "example.tmpl", nil)
+//  // Options passed to Pandoc
+//  opt := []string{}
+//  src, err := pdtmpl.Format(src, "example.tmpl", opt)
 //  if err != nil {
 //     // ... handle error
 //  }
 //  fmt.Printf("%s\n", src)
 //```
 //
-func Format(src []byte, template string, args []string) ([]byte, error) {
+// NOTE: If the template name is an empty string then the
+// template option of Pandoc will not be automatically generated.
+// This can be helpful when turning JSON into non-HTML formats like
+// Markdown or using the default Pandoc templates.
+//
+// Turning "example.json" into a Markdown document. The "body"
+// attribute will become the Markdown document body. The whole
+// JSON document becomes the YAML frontmatter of the document.
+//
+//```
+//  src, err := ioutil.ReadFile("example.json")
+//  if err != nil {
+//     // ... handle error
+//  }
+//  // Options passed to Pandoc
+//  opt := []string{"-t", "markdown"}
+//  src, err := pdtmpl.Format(src, "", opt)
+//  if err != nil {
+//     // ... handle error
+//  }
+//  fmt.Printf("%s\n", src)
+//```
+//
+func Apply(src []byte, template string, options []string) ([]byte, error) {
 	pandoc, err := exec.LookPath("pandoc")
 	if err != nil {
 		return nil, err
@@ -103,7 +144,7 @@ func Format(src []byte, template string, args []string) ([]byte, error) {
 		//Remove tmpFile
 		os.RemoveAll(tmpFile)
 	}()
-	// Write our JSON to the temp file, check for errors.
+	// Write our JSON or YAML to the temp file, check for errors.
 	_, err = fmt.Fprintf(f, "%s", src)
 	if err != nil {
 		return nil, err
@@ -111,14 +152,36 @@ func Format(src []byte, template string, args []string) ([]byte, error) {
 	// Download on experience from text link for Monday's
 	// virtual inspection. Install app and stop at conference code
 	// entry.
-	params := []string{}
-	params = append(params, "--metadata-file", tmpFile)
+	vargs := []string{}
+	vargs = append(vargs, "--metadata-file", tmpFile)
 	if template != "" {
-		params = append(params, "--template", template)
+		vargs = append(vargs, "--template", template)
 	}
-	if (args != nil) && (len(args) > 0) {
-		params = append(params, args...)
+	if (options != nil) && (len(options) > 0) {
+		vargs = append(vargs, options...)
 	}
-	cmd := exec.Command(pandoc, params...)
-	return cmd.Output()
+	if verbose {
+		fmt.Fprintf(os.Stderr, "%s %s\n", pandoc, strings.Join(vargs, " "))
+	}
+	cmd := exec.Command(pandoc, vargs...)
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return nil, err
+	}
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+	errMsg, _ := ioutil.ReadAll(stderr)
+	src, _ = ioutil.ReadAll(stdout)
+	if err := cmd.Wait(); err != nil {
+		if len(errMsg) > 0 {
+			return nil, fmt.Errorf("%s, %s\n", errMsg, err)
+		}
+		return nil, err
+	}
+	return src, nil
 }
