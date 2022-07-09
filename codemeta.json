@@ -6,8 +6,8 @@
     "dateCreated": "2022-07-08",
     "issueTracker": "https://github.com/rsdoiel/pdtmpl/issues",
     "name": "pdtmpl",
-    "version": "0.0.0",
-    "description": "A light weight pre-processor for Pandoc. Target use case is JSON object\ndocuments rendered via Pandoc templates.",
+    "version": "0.0.1",
+    "description": "A light weight pre-processor for Pandoc. Target use case is JSON object documents rendered via Pandoc templates.",
     "applicationCategory": "web publishing",
     "programmingLanguage": [
         "Go"
@@ -18,7 +18,8 @@
         "macOS"
     ],
     "softwareRequirements": [
-        "Pandoc 2.18 or better"
+        "Pandoc 2.18 or better",
+        "Go 1.18.3 or better"
     ],
     "author": [
         {
