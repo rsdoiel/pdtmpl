@@ -1,0 +1,15 @@
+<section>
+<h1 id="title">${title}</h1>
+${if(nav)}
+<nav>
+<ul>
+${for(nav)}
+  <li><a href="${object.nav.href}">${nav.label}</a></li>  
+${endfor}
+</ul>
+</nav>
+${endif}
+<div>
+${content}
+</div>
+</section>
