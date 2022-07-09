@@ -121,7 +121,7 @@ update_version:
 	$(EDITOR) codemeta.json
 	codemeta2cff codemeta.json CITATION.cff
 
-release: CITATION.cff clean version.go collection.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macos-amd64 dist/macos-arm64 dist/raspbian-arm7
+release: CITATION.cff clean version.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macos-amd64 dist/macos-arm64 dist/raspbian-arm7
 
 status:
 	git status
