@@ -10,6 +10,10 @@ import (
 	"github.com/rsdoiel/pdtmpl"
 )
 
+func version(appName string) string {
+	return fmt.Sprintf("%s %s\n", path.Base(appName), pdtmpl.Version)
+}
+
 func license(appName string) string {
 	appName = path.Base(appName)
 	src := `
@@ -97,13 +101,21 @@ func handleError(err error) {
 }
 
 func main() {
-	showHelp := false
-	showLicense := false
+	var (
+		showHelp    bool
+		showLicense bool
+		showVersion bool
+	)
 	flag.BoolVar(&showHelp, "help", false, "display usage")
+	flag.BoolVar(&showVersion, "version", false, "display version")
 	flag.BoolVar(&showLicense, "license", false, "display license")
 	flag.Parse()
 	if showHelp {
 		fmt.Print(usage(os.Args[0]))
+		os.Exit(0)
+	}
+	if showVersion {
+		fmt.Print(version(os.Args[0]))
 		os.Exit(0)
 	}
 	if showLicense {

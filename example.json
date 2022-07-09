@@ -1,6 +1,6 @@
 {
     "title": "This is a title",
-    "content": "This is some content",
+    "body": "This is some content",
     "nav": [
         {"href": "index.html", "label": "Home" },
         {"href": "../", "label": "Up"},

@@ -111,8 +111,11 @@ func Format(src []byte, template string, args []string) ([]byte, error) {
 	// Download on experience from text link for Monday's
 	// virtual inspection. Install app and stop at conference code
 	// entry.
-	params := []string{"--template", template}
+	params := []string{}
 	params = append(params, "--metadata-file", tmpFile)
+	if template != "" {
+		params = append(params, "--template", template)
+	}
 	if (args != nil) && (len(args) > 0) {
 		params = append(params, args...)
 	}

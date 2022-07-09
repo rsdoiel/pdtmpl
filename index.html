@@ -32,7 +32,7 @@ includes the Go package and an example command line tool (cli).</p>
 pre-processor in Go. An example usage would be to process <a
 href="example.json">example.json</a> JSON document using a Pandoc
 template called <a href="example.tmpl">example.tpml</a>.</p>
-<pre class="shell"><code>    pdtmpl example.tmpl -t html5 &lt; example.json &gt; example.html</code></pre>
+<pre class="shell"><code>    pdtmpl example.tmpl &lt; example.json &gt; example.html</code></pre>
 <h2 id="go-package">Go package</h2>
 <p>Here’s some simple use examples of the three functions supplied in
 the pdtmpl package.</p>
@@ -43,7 +43,7 @@ output based on the Pandoc template <code>example.tmpl</code></p>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... handle error</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// options passed to Pandoc</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{</span><span class="st">&quot;-t&quot;</span><span class="op">,</span> <span class="st">&quot;html5&quot;</span><span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{}</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    src<span class="op">,</span> err <span class="op">=</span> pdtmpl<span class="op">.</span>Format<span class="op">(</span>src<span class="op">,</span> <span class="st">&quot;example.tmpl&quot;</span><span class="op">,</span> opt<span class="op">)</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> err <span class="op">!=</span> <span class="ot">nil</span> <span class="op">{</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... handle error</span></span>
@@ -58,7 +58,7 @@ output</p>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> f<span class="op">.</span>Close<span class="op">()</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// options passed to Pandoc</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{</span><span class="st">&quot;-t&quot;</span><span class="op">,</span> <span class="st">&quot;html5&quot;</span><span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{}</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    src<span class="op">,</span> err <span class="op">:=</span> pdtmpl<span class="op">.</span>ReadAll<span class="op">(</span>f<span class="op">,</span> <span class="st">&quot;example.tmpl&quot;</span><span class="op">,</span> opt<span class="op">)</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> err <span class="op">!=</span> <span class="ot">nil</span> <span class="op">{</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... handle error</span></span>
@@ -68,7 +68,7 @@ output</p>
 JSON source from standard input and write the processed pandoc templated
 standard output.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>    <span class="co">// options passed to Pandoc</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{</span><span class="st">&quot;-t&quot;</span><span class="op">,</span> <span class="st">&quot;html5&quot;</span><span class="op">}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">:=</span> <span class="op">[]</span><span class="dt">string</span><span class="op">{}</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    err <span class="op">:=</span> pdtmpl<span class="op">.</span>ApplyTemplate<span class="op">(</span>os<span class="op">.</span>Stdin<span class="op">,</span> os<span class="op">.</span>Stdout<span class="op">,</span> <span class="st">&quot;example.tmpl&quot;</span><span class="op">,</span> opt<span class="op">)</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> err <span class="op">!=</span> <span class="ot">nil</span> <span class="op">{</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... handle error</span></span>
