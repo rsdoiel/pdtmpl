@@ -120,8 +120,9 @@ func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error 
 //  if err != nil {
 //     // ... handle error
 //  }
-//  // Options passed to Pandoc
-//  opt := []string{"-t", "markdown"}
+//  // Options passed to Pandoc, use "-s" to trigger writing
+//  // the document via Pandoc's default templates.
+//  opt := []string{"-s", "-t", "markdown"}
 //  src, err := pdtmpl.Format(src, "", opt)
 //  if err != nil {
 //     // ... handle error
