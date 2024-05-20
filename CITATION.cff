@@ -8,6 +8,6 @@ authors:
 abstract: A light weight pre-processor for Pandoc. Target use case is JSON object documents rendered via Pandoc templates.
 repository-code: "https://github.com/rsdoiel/pdtmpl"
 type: software
-version: 0.0.1
-license-url: "https://spdx.org/licenses/BSD-3-Clause"
-date-released: 2022-07-09
+version: 0.0.2
+license-url: "https://spdx.org/licenses/AGPL-3.0-or-later"
+date-released: 2024-05-20

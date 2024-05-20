@@ -1,13 +1,15 @@
 {
     "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
     "@type": "SoftwareSourceCode",
-    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
     "codeRepository": "https://github.com/rsdoiel/pdtmpl",
     "dateCreated": "2022-07-08",
+    "dateModified": "2024-05-20",
     "issueTracker": "https://github.com/rsdoiel/pdtmpl/issues",
     "name": "pdtmpl",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A light weight pre-processor for Pandoc. Target use case is JSON object documents rendered via Pandoc templates.",
+	"releaseNotes": "updated license to AGPL v3 later",
     "applicationCategory": "web publishing",
     "programmingLanguage": [
         "Go"
@@ -19,7 +21,7 @@
     ],
     "softwareRequirements": [
         "Pandoc 2.18 or better",
-        "Go 1.18.3 or better"
+        "Go 1.22 or better"
     ],
     "author": [
         {

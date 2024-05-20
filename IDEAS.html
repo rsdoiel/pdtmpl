@@ -28,8 +28,28 @@
   
 
 <h1 id="ideas">Ideas</h1>
+<h2 id="questions">Questions</h2>
 <ul>
-<li>create an in memory file system for temp files, this could speed up processing and also avoid the messy issue of file permissions of the content that gets buffered to disk and passed via “–template” and “–metadata-file”.</li>
+<li>What would be the minimum additional tools besides GNU Make and
+Pandoc needed to make it easy to maintain my website?
+<ul>
+<li>blogit for generating JSON presentation of blog post and rendering
+to the appropriate location of blog</li>
+<li>pdtmpl for rendering</li>
+<li>sitemapper for generating JSON sitemap files in easy directory</li>
+<li>feeder for generating reallysimple feeds and RSS 2.0 feeds in each
+directory</li>
+</ul></li>
+</ul>
+<h2 id="improvements">Improvements</h2>
+<ul>
+<li>a “-walker” option that would walk the file system looking for JSON
+document to turn into Markdown then into HTML so that the blog is always
+in a data format</li>
+<li>use an in memory file system for temp files, this could speed up
+processing and also avoid the messy issue of file permissions of the
+content that gets buffered to disk and passed via “–template” and
+“–metadata-file”.</li>
 </ul>
 </section>
 
