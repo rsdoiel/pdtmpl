@@ -1,6 +1,6 @@
-%pdtmpl(1) skimmer user manual | version 0.0.2 2024-05-20
+%pdtmpl(1) skimmer user manual | version 0.0.2 2024-05-21
 % R. S. Doiel
-% 3dffa6f
+% c2a99e3
 
 # APP
 
