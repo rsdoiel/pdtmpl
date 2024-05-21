@@ -20,9 +20,51 @@ pre-processor in Go. An example usage would be to process
 [example.json](example.json) JSON document using a Pandoc template
 called [example.tpml](example.tmpl).
 
-```shell
-    pdtmpl example.tmpl < example.json > example.html
-```
+~~~shell
+    pdtmpl tmpl example.tmpl < example.json > example.html
+~~~
+
+Render a Markdown file with an embedded YAML block describing
+a webform via Pandoc.
+
+~~~shell
+    pdtmpl webform < document.md | pandoc -f Markdown -t html5 -s
+~~~
+
+The Markdown file "document.md" would have a simple web form
+described via YAML. This oleviates the need to embed HTML. Here's
+an example of embedding a "search" form in a "document.md"
+
+~~~markdown
+
+# A search page ...
+
+This is followed by my form.
+
+---
+form:
+  id: search
+  action: /search
+  method:  POST
+  elements:
+    - id: search
+      type: search
+      placeholdertext: enter a search string here
+    - id: submit
+      name: submit
+      type: submit
+      value: Search
+---
+~~~
+
+Other text could follow. When pltmpl webform processes
+this turns the search form description into HTML markup.
+form describes the outer HTML form element who's attributes
+also map (e.g. aciton, method). Additionally the form as 
+an "elements" attribute which is a list of HTML elements
+that are children of the form element.  The YAML notations
+provides a cleaner expression of the webform by avoiding
+the HTML markdown but clear maps from the HTML markup.
 
 Go package
 ----------
@@ -33,7 +75,7 @@ in the pdtmpl package.
 Given a JSON Object document  as a slice of bytes render formated
 output based on the Pandoc template `example.tmpl`
 
-```go
+~~~go
     src, err := ioutil.ReadFile("example.json")
     if err != nil {
         // ... handle error
@@ -45,12 +87,12 @@ output based on the Pandoc template `example.tmpl`
         // ... handle error
     }
     fmt.Fprintf(os.Stdout, "%s", src)
-```
+~~~
 
 Using an `io.Reader` to retrieve the JSON content, process with the
 `example.tmpl` template and write standard output
 
-```go
+~~~go
     f, err := Open("example.json")
     if err != nil {
         // ... handle error
@@ -63,19 +105,19 @@ Using an `io.Reader` to retrieve the JSON content, process with the
         // ... handle error
     }
     fmt.Fprintf(os.Stdout, "%s", src)
-```
+~~~
 
 Using an `io.Reader` and `io.Writer` to read JSON source from standard
 input and write the processed pandoc templated standard output.
 
-```go
+~~~go
     // options passed to Pandoc
     opt := []string{}
     err := pdtmpl.ApplyIO(os.Stdin, os.Stdout, "example.tmpl", opt)
     if err != nil {
         // ... handle error
     }
-```
+~~~
 
 Requirements
 ------------
@@ -93,12 +135,12 @@ Installation
 3. Compile using `make`
 4. Install using `make install`
 
-```shell
+~~~shell
     git clone https://github.com/rsdoiel/pdtmpl
     cd pdtmpl
     make
     make install
-```
+~~~
 
 NOTE: This recipe assumes' you are familar with setting up a
 Go development environment (e.g. You've set GOPATH environment
