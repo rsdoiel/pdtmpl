@@ -55,12 +55,15 @@ form:
       type: submit
       value: Search
 ---
+
+Other text could follow the YAML block.
+
 ~~~
 
-Other text could follow. When pltmpl webform processes
-this turns the search form description into HTML markup.
-form describes the outer HTML form element who's attributes
-also map (e.g. aciton, method). Additionally the form as 
+
+When pltmpl webform processes this turns the form object into HTML markup.
+form describes the outer HTML form element who's attributes also map
+(e.g. aciton, method). Additionally the form as
 an "elements" attribute which is a list of HTML elements
 that are children of the form element.  The YAML notations
 provides a cleaner expression of the webform by avoiding
