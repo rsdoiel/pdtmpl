@@ -12,12 +12,16 @@
 package pdtmpl
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+
+	// 3rd Party libraries
+	"gopkg.in/yaml.v3"
 )
 
 var verbose bool
@@ -29,55 +33,59 @@ func SetVerbose(onoff bool) {
 	verbose = onoff
 }
 
-// ReadAll reads JSON from as a stream using an io.Reader.
+//
+// Pandoc preprosor for JSON and YAML experiment
+//
+
+// ReadAllTemplate reads JSON from as a stream using an io.Reader.
 // Buffers it. Then uses Apply and options return
 // a slice of bytes and error value.
 //
 //```shell
 //    // Options passed to Pandoc
 //    opt := []string{}
-//    out, err := pdtmpl.ReadAll(os.Stdin, "page.tmpl", opt)
+//    out, err := pdtmpl.ReadAllTemplate(os.Stdin, "page.tmpl", opt)
 //    if err != nil {
 //       // ... handle error
 //    }
 //    fmt.Fprintf(os.Stdout, "%s\n", out)
 //```
 //
-func ReadAll(r io.Reader, template string, options []string) ([]byte, error) {
+func ReadAllTemplate(r io.Reader, template string, options []string) ([]byte, error) {
 	// Read the JSON input
 	src, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
-	return Apply(src, template, options)
+	return ApplyTemplate(src, template, options)
 }
 
-// ReadFile reads a JSON or YAML document from a file then uses Apply
+// ReadFileTemplate reads a JSON or YAML document from a file then uses Apply
 // and options returning a slice of bytes and error value.
-func ReadFile(name string, template string, options []string) ([]byte, error) {
+func ReadFileTemplate(name string, template string, options []string) ([]byte, error) {
 	// Read the JSON or YAML file
 	src, err := ioutil.ReadFile(name)
 	if err != nil {
 		return nil, err
 	}
-	return Apply(src, template, options)
+	return ApplyTemplate(src, template, options)
 }
 
-// ApplyIO reads in JSON from an io.Reader, applies the template
-// and parameters via Format() writing the result to the io.Writer.
+// ApplyIOTemplate reads in JSON from an io.Reader, applies the template
+// and parameters via ApplyTemplate() writing the result to the io.Writer.
 // returns an error value.
 //
 //```
 //  // Options passed to Pandoc
 //  opt := []string{}
-//  err := pdtmpl.ApplyIO(os.Stdin, os.Stdout, "example.tmpl", opt)
+//  err := pdtmpl.ApplyIOTemplate(os.Stdin, os.Stdout, "example.tmpl", opt)
 //  if err != nil {
 //     // ... handle error
 //  }
 //```
 //
-func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error {
-	src, err := ReadAll(r, template, options)
+func ApplyIOTemplate(r io.Reader, w io.Writer, template string, options []string) error {
+	src, err := ReadAllTemplate(r, template, options)
 	if err != nil {
 		return err
 	}
@@ -85,7 +93,7 @@ func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error 
 	return err
 }
 
-// Apply takes a byte array (like you could read from os.Stdin
+// ApplyTemplate takes a byte array (like you could read from os.Stdin
 // containing JSON or YAML. It creates a temp file and passes that to
 // Pandoc via `--metadata-file` option along with any additional
 // pandoc options provided. Pandoc then renders the output either
@@ -99,7 +107,7 @@ func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error 
 //  }
 //  // Options passed to Pandoc
 //  opt := []string{}
-//  src, err := pdtmpl.Format(src, "example.tmpl", opt)
+//  src, err := pdtmpl.ApplyTemplate(src, "example.tmpl", opt)
 //  if err != nil {
 //     // ... handle error
 //  }
@@ -123,14 +131,14 @@ func ApplyIO(r io.Reader, w io.Writer, template string, options []string) error 
 //  // Options passed to Pandoc, use "-s" to trigger writing
 //  // the document via Pandoc's default templates.
 //  opt := []string{"-s", "-t", "markdown"}
-//  src, err := pdtmpl.Format(src, "", opt)
+//  src, err := pdtmpl.ApplyTemplate(src, "", opt)
 //  if err != nil {
 //     // ... handle error
 //  }
 //  fmt.Printf("%s\n", src)
 //```
 //
-func Apply(src []byte, template string, options []string) ([]byte, error) {
+func ApplyTemplate(src []byte, template string, options []string) ([]byte, error) {
 	pandoc, err := exec.LookPath("pandoc")
 	if err != nil {
 		return nil, err
@@ -186,3 +194,140 @@ func Apply(src []byte, template string, options []string) ([]byte, error) {
 	}
 	return src, nil
 }
+
+//
+// WebForm experiment
+//
+
+// MkWebForm takes a map[string]interface{} and translates the form structure into HTML
+func MkWebForm(out io.Writer, eout io.Writer, m map[string]interface{}) error {
+	var (
+		eType string
+		eId string
+	)
+	fmt.Fprintf(out, "<form")
+	for _, k := range []string{ "id", "name", "action", "method", "encoding" } {
+		if val, ok := m[k]; ok {
+			fmt.Fprintf(out, " %s=%q", k, val)
+		}
+	}
+	fmt.Fprintf(out, " >\n")
+	if l, ok := m["elements"].([]interface{}); ok {
+		for _, item := range l {
+			elem := item.(map[string]interface{})
+			if eId, ok = elem["id"].(string); ! ok {
+				eId = ""
+			}
+			if eType, ok = elem["type"].(string); !ok {
+				eType = "text"
+			}
+			// Map the button alias back to the text input type.
+			if eType == "button" {
+				eType = "text"
+			}
+			prefix := "input"
+			if eType == "select" || eType == "textarea" {
+				prefix = eType
+			}
+			if label, ok := elem["label"].(string); ok {
+				label = ""
+				fmt.Fprintf(out, "\t<label for=%q>%s</label><%s type=%q", eId, label, prefix, eType)
+			} else {
+				fmt.Fprintf(out, "\t<%s type=%q", prefix, eType)
+			}
+			if eId != "" {
+				fmt.Fprintf(out, " id=%q", eId)
+			}
+			for _, k := range []string{"class", "name", "value", "required", "placeholdertext", "title", "required", "pattern" } {
+				if val, ok := elem[k].(string); ok {
+					fmt.Fprintf(out, " %s=%q", k, val)
+				}
+			}
+			// Handle special case of select element type, handle the submap of options' value and labels
+			// Handle case of select and textarea otherwise end form element
+			switch eType {
+			case "select":
+				fmt.Fprintf(out, " >\n")
+				if l, ok := elem["options"]; ok {
+					option := l.(map[string]interface{})
+					for val, label := range option {
+						fmt.Fprintf(out, "\t\t<option value=%q>%s</option\n", val, label)
+					}
+				}
+				fmt.Fprintf(out, "\t</select>\n")
+			case "textarea":
+				fmt.Fprintf(out, " ></textarea>\n")
+			default:
+				fmt.Fprintf(out, " >\n")
+			}
+		}
+	}
+   	fmt.Fprintf(out, "</form>\n")	
+	return nil
+}
+
+// ApplyWebForm reads Markdown present as input and converts the YAML blogs
+// with a form object into HTML blocks with a webform in them.
+//
+//```shell
+//    // Data is read from standard input and written to standard out.
+//    opt := []string{}
+//    if err := pdtmpl.ApplyIOWebForm(os.Stdin, os.Stdout, os.Stderr, opt); err != nil {
+//       // ... handle error
+//    }
+//```
+//
+func ApplyWebForm(in io.Reader, out io.Writer, eout io.Writer, options []string) error {
+	scanner := bufio.NewScanner(in)
+	inYaml, inCodeBlock := false, false
+	ymlText := []string{}
+	lineNo := 0
+	eCnt := 0
+	for scanner.Scan() {
+		lineNo++
+		line := scanner.Text()
+		if strings.HasPrefix(line, "~~~") {
+			inCodeBlock = !inCodeBlock
+		}
+		if inCodeBlock {
+			fmt.Fprintf(out, "%s\n", line)
+		} else {
+			if line == "---" {
+				if inYaml {
+					// Gather Yaml, decode it and see if we have a "form" object
+					// If not write it out and continue
+					m := map[string]interface{}{}
+					txt := strings.Join(ymlText, "\n")
+					if err := yaml.Unmarshal([]byte(txt), &m); err != nil {
+						fmt.Fprintf(eout, "line %d: %s\n", lineNo, err)
+						eCnt++
+					}
+					form, ok := m["form"].(map[string]interface{});
+					if ! ok {
+						// This isn't a form block.
+						fmt.Fprintf(out, "---\n%s\n---\n", txt)
+					} else {
+						if err := MkWebForm(out, eout, form); err != nil {
+							fmt.Fprintf(eout, "line %d: %s\n", lineNo, err)
+							eCnt++
+						}
+					}
+					ymlText = []string{}
+				}
+				inYaml = !inYaml
+			} else if inYaml {
+				ymlText = append(ymlText, line)
+			} else {
+				fmt.Fprintf(out, "%s\n", line)
+			}
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+	if eCnt > 0 {
+		return fmt.Errorf("%d errors encountered rending output\n", eCnt)
+	}
+	return nil
+}
+
