@@ -20,3 +20,5 @@ pandoc.*.json
 # Project excluded directories
 bin/*
 dist/*
+man/*
+?.???
